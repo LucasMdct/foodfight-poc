@@ -49,6 +49,8 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
   const heroY = useMemo(() => makeMutable(heroTopY(1)), []); // eslint-disable-line react-hooks/exhaustive-deps
   const heroOpacity = useMemo(() => makeMutable(1), []);
   const invulnUntil = useMemo(() => makeMutable(0), []); // UI-clock ms until flicker ends
+  const elapsedTime = useMemo(() => makeMutable(0), []); // Monotonic time in ms that survives re-renders
+  const lastUpdateTime = useMemo(() => makeMutable(0), []); // Track when the last 60fps frame update ran
 
   const obstacleX = useMemo(
     () => Array.from({ length: POOL_SIZE }, () => makeMutable(-GAME_CONSTANTS.OBSTACLE_WIDTH)),
@@ -79,6 +81,9 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
   const applyFps = useCallback((fps: number) => {
     useGameStore.getState().actions.updateFps(fps);
   }, []);
+  const applyScore = useCallback((points: number) => {
+    useGameStore.getState().actions.incrementScore(points);
+  }, []);
 
   // Keep the UI-thread game-over flag in sync with the store.
   const isGameOver = useGameStore((s) => s.state.isGameOver);
@@ -89,6 +94,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
   // --- Public actions (JS thread) -------------------------------------------
   const moveLane = useCallback(
     (direction: -1 | 1) => {
+      if (gameOver.value === 1) return;
       const next = Math.min(LANE_COUNT - 1, Math.max(0, heroLane.value + direction));
       if (next === heroLane.value) return;
       heroLane.value = next;
@@ -97,7 +103,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
         duration: GAME_CONSTANTS.HERO_LANE_TRANSITION_DURATION,
       });
     },
-    [heroLane, heroY, heroTopY]
+    [heroLane, heroY, heroTopY, gameOver]
   );
 
   const reset = useCallback(() => {
@@ -109,8 +115,10 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
     heroY.value = heroTopY(1);
     heroOpacity.value = 1;
     invulnUntil.value = 0;
+    elapsedTime.value = 0;
+    lastUpdateTime.value = 0;
     spawnAccum.value = 0;
-  }, [obstacleActive, obstacleX, heroLane, heroY, heroOpacity, invulnUntil, spawnAccum, heroTopY]);
+  }, [obstacleActive, obstacleX, heroLane, heroY, heroOpacity, invulnUntil, elapsedTime, lastUpdateTime, spawnAccum, heroTopY]);
 
   // --- The frame loop (UI thread worklet) -----------------------------------
   // Constants captured by value so the worklet stays self-contained.
@@ -119,15 +127,31 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
   const OBS_SPEED = GAME_CONSTANTS.OBSTACLE_SPEED;
   const SPAWN_INTERVAL = GAME_CONSTANTS.OBSTACLE_SPAWN_INTERVAL;
   const HERO_W = GAME_CONSTANTS.HERO_WIDTH;
-  const HERO_H = GAME_CONSTANTS.HERO_HEIGHT;
   const PAD = GAME_CONSTANTS.HERO_HITBOX_PADDING;
   const FLICKER_DURATION = GAME_CONSTANTS.COLLISION_FLICKER_DURATION;
   const FLICKER_COUNT = GAME_CONSTANTS.COLLISION_FLICKER_COUNT;
 
   useFrameCallback((frame) => {
     'worklet';
-    const dtMs = frame.timeSincePreviousFrame ?? GAME_CONSTANTS.FRAME_TIME_MS;
-    const now = frame.timeSinceFirstFrame; // monotonic ms UI clock
+    const timestamp = frame.timestamp;
+
+    // Initialize lastUpdateTime if it is 0 or on callback initialization
+    if (frame.timeSincePreviousFrame === null || lastUpdateTime.value === 0) {
+      lastUpdateTime.value = timestamp;
+    }
+
+    const elapsed = timestamp - lastUpdateTime.value;
+
+    // Throttle to 60 FPS (~16.0ms threshold to prevent timing jitter skips)
+    if (elapsed < 16.0 && frame.timeSincePreviousFrame !== null) {
+      return;
+    }
+
+    const dtMs = elapsed > 0 ? elapsed : GAME_CONSTANTS.FRAME_TIME_MS;
+    lastUpdateTime.value = timestamp;
+
+    elapsedTime.value += dtMs;
+    const now = elapsedTime.value;
 
     // --- FPS: sample once per second, then hand one value to React ----------
     fpsFrames.value += 1;
@@ -172,6 +196,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
 
       if (x + OBS_W < 0) {
         obstacleActive[i].value = 0; // recycle: no allocation, no leak
+        runOnJS(applyScore)(10); // Dodging an obstacle adds 10 points
         continue;
       }
 
