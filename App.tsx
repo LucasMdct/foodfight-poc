@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GameCanvas } from './src/components/GameCanvas';
 import { SwipeHandler } from './src/components/SwipeHandler';
 import { useGameStore } from './src/store/gameStore';
 import { useRunnerEngine } from './src/hooks/useRunnerEngine';
 import { GameLoader } from './src/components/GameLoader';
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});
+import { styles } from './App.styles';
 
 function GameScreen() {
   const { width, height } = useWindowDimensions();
