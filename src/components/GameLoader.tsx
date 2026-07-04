@@ -47,12 +47,11 @@ export const GameLoader = ({ onFinished }: GameLoaderProps) => {
       RNAnimated.timing(rotateAnim, { toValue: 1, duration: 2000, useNativeDriver: true })
     ).start();
 
-    // 3. Progress stages with dopamine curve
+    // 3. Progress stages with faster dopamine curve
     const stages = [
-      { target: 35, duration: 600 },
-      { target: 55, duration: 450 },
-      { target: 85, duration: 800 },
-      { target: 100, duration: 350 },
+      { target: 40, duration: 300 },
+      { target: 80, duration: 400 },
+      { target: 100, duration: 250 },
     ];
 
     let delay = 0;
@@ -78,17 +77,16 @@ export const GameLoader = ({ onFinished }: GameLoaderProps) => {
           timers.push(stepTimer);
         }
 
-        // When last stage finishes, trigger burst
         if (i === stages.length - 1) {
           const burstTimer = setTimeout(() => {
             finish();
-          }, stage.duration + 100);
+          }, stage.duration);
           timers.push(burstTimer);
         }
       }, delay);
 
       timers.push(timer);
-      delay += stage.duration + 100;
+      delay += stage.duration;
     });
 
     return () => {

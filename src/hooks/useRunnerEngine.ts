@@ -69,7 +69,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
     []
   );
 
-  const spawnAccum = useMemo(() => makeMutable(0), []);
+  const spawnAccum = useMemo(() => makeMutable(GAME_CONSTANTS.OBSTACLE_SPAWN_INTERVAL), []);
   const fpsAccum = useMemo(() => makeMutable(0), []);
   const fpsFrames = useMemo(() => makeMutable(0), []);
   const gameOver = useMemo(() => makeMutable(0), []); // 1 when game over (freezes the loop)
@@ -117,7 +117,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
     invulnUntil.value = 0;
     elapsedTime.value = 0;
     lastUpdateTime.value = 0;
-    spawnAccum.value = 0;
+    spawnAccum.value = GAME_CONSTANTS.OBSTACLE_SPAWN_INTERVAL;
   }, [obstacleActive, obstacleX, heroLane, heroY, heroOpacity, invulnUntil, elapsedTime, lastUpdateTime, spawnAccum, heroTopY]);
 
   // --- The frame loop (UI thread worklet) -----------------------------------
