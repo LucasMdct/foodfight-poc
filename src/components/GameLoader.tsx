@@ -1,0 +1,203 @@
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, useWindowDimensions, Animated as RNAnimated } from 'react-native';
+
+interface GameLoaderProps {
+  onFinished: () => void;
+}
+
+export const GameLoader = ({ onFinished }: GameLoaderProps) => {
+  const { width } = useWindowDimensions();
+  const [percent, setPercent] = useState(0);
+
+  // Use React Native's built-in Animated API — zero Reanimated, zero Skia, zero crashes
+  const pulseAnim = useRef(new RNAnimated.Value(0.95)).current;
+  const rotateAnim = useRef(new RNAnimated.Value(0)).current;
+  const fadeAnim = useRef(new RNAnimated.Value(1)).current;
+  const scaleAnim = useRef(new RNAnimated.Value(1)).current;
+  const barWidth = useRef(new RNAnimated.Value(0)).current;
+
+  const onFinishedRef = useRef(onFinished);
+  useEffect(() => {
+    onFinishedRef.current = onFinished;
+  }, [onFinished]);
+
+  const finish = useCallback(() => {
+    // Scale burst + fade out
+    RNAnimated.parallel([
+      RNAnimated.spring(scaleAnim, { toValue: 4, damping: 12, useNativeDriver: true }),
+      RNAnimated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => {
+      onFinishedRef.current();
+    });
+  }, [scaleAnim, fadeAnim]);
+
+  useEffect(() => {
+    // 1. Continuous pulse
+    RNAnimated.loop(
+      RNAnimated.sequence([
+        RNAnimated.spring(pulseAnim, { toValue: 1.08, damping: 6, useNativeDriver: true }),
+        RNAnimated.spring(pulseAnim, { toValue: 0.95, damping: 6, useNativeDriver: true }),
+      ])
+    ).start();
+
+    // 2. Continuous rotation
+    RNAnimated.loop(
+      RNAnimated.timing(rotateAnim, { toValue: 1, duration: 2000, useNativeDriver: true })
+    ).start();
+
+    // 3. Progress stages with dopamine curve
+    const stages = [
+      { target: 35, duration: 600 },
+      { target: 55, duration: 450 },
+      { target: 85, duration: 800 },
+      { target: 100, duration: 350 },
+    ];
+
+    let delay = 0;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    stages.forEach((stage, i) => {
+      const timer = setTimeout(() => {
+        // Animate bar width
+        RNAnimated.timing(barWidth, {
+          toValue: (width * 0.7) * (stage.target / 100),
+          duration: stage.duration,
+          useNativeDriver: false, // width can't use native driver
+        }).start();
+
+        // Animate percent counter
+        const startPercent = i === 0 ? 0 : stages[i - 1].target;
+        const steps = stage.target - startPercent;
+        const stepDuration = stage.duration / steps;
+        for (let s = 1; s <= steps; s++) {
+          const stepTimer = setTimeout(() => {
+            setPercent(startPercent + s);
+          }, s * stepDuration);
+          timers.push(stepTimer);
+        }
+
+        // When last stage finishes, trigger burst
+        if (i === stages.length - 1) {
+          const burstTimer = setTimeout(() => {
+            finish();
+          }, stage.duration + 100);
+          timers.push(burstTimer);
+        }
+      }, delay);
+
+      timers.push(timer);
+      delay += stage.duration + 100;
+    });
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+    };
+  }, [pulseAnim, rotateAnim, barWidth, width, finish]);
+
+  const rotateInterpolation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <RNAnimated.View style={[styles.container, { opacity: fadeAnim }]}>
+      {/* Central portal */}
+      <RNAnimated.View
+        style={[
+          styles.portalContainer,
+          { transform: [{ scale: RNAnimated.multiply(pulseAnim, scaleAnim) }] },
+        ]}
+      >
+        {/* Outer rotating dashed ring */}
+        <RNAnimated.View
+          style={[
+            styles.outerRing,
+            { transform: [{ rotate: rotateInterpolation }] },
+          ]}
+        />
+        {/* Middle glow */}
+        <View style={styles.middleGlow} />
+        {/* Inner core */}
+        <View style={styles.innerCore} />
+      </RNAnimated.View>
+
+      {/* Progress bar */}
+      <View style={[styles.barTrack, { width: width * 0.7 }]}>
+        <RNAnimated.View style={[styles.barFill, { width: barWidth }]} />
+      </View>
+
+      {/* Text */}
+      <View style={styles.textContainer}>
+        <Text style={styles.loadingText}>LOADING</Text>
+        <Text style={styles.percentText}>{percent}%</Text>
+      </View>
+    </RNAnimated.View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  portalContainer: {
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  outerRing: {
+    position: 'absolute',
+    width: 114,
+    height: 114,
+    borderRadius: 57,
+    borderWidth: 3,
+    borderColor: '#4ECDC4',
+    borderStyle: 'dashed',
+  },
+  middleGlow: {
+    position: 'absolute',
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: 'rgba(78, 205, 196, 0.15)',
+  },
+  innerCore: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FF6B6B',
+    opacity: 0.85,
+  },
+  barTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4ECDC4',
+  },
+  textContainer: {
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  loadingText: {
+    color: '#666666',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 3,
+    marginBottom: 4,
+  },
+  percentText: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+});
