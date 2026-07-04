@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Canvas, Rect } from '@shopify/react-native-skia';
 import { useGameStore } from '../store/gameStore';
 import { GAME_CONSTANTS } from '../types/constants';
@@ -9,9 +9,10 @@ interface GameCanvasProps {
   engine: RunnerEngine;
   screenWidth: number;
   screenHeight: number;
+  onReset: () => void;
 }
 
-export const GameCanvas = ({ engine, screenWidth, screenHeight }: GameCanvasProps) => {
+export const GameCanvas = ({ engine, screenWidth, screenHeight, onReset }: GameCanvasProps) => {
   const { state } = useGameStore();
   const laneHeight = screenHeight / 3;
 
@@ -67,11 +68,6 @@ export const GameCanvas = ({ engine, screenWidth, screenHeight }: GameCanvasProp
             opacity={engine.obstacleActive[i]}
           />
         ))}
-
-        {/* Game Over dim overlay */}
-        {state.isGameOver && (
-          <Rect x={0} y={0} width={screenWidth} height={screenHeight} color="rgba(0, 0, 0, 0.5)" />
-        )}
       </Canvas>
 
       {/* HUD (discrete state only — no per-frame re-render) */}
@@ -88,7 +84,7 @@ export const GameCanvas = ({ engine, screenWidth, screenHeight }: GameCanvasProp
       >
         <View>
           <Text style={{ fontSize: 14, fontWeight: '600', color: '#000' }}>
-            Health: {state.health}
+            Health: {state.health}  |  Score: {state.score}
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
@@ -104,28 +100,85 @@ export const GameCanvas = ({ engine, screenWidth, screenHeight }: GameCanvasProp
         </View>
       </View>
 
-      {/* Game Over screen */}
+      {/* Game Over screen with integrated Play Again button */}
       {state.isGameOver && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 20,
-          }}
-        >
-          <View style={{ backgroundColor: 'white', padding: 30, borderRadius: 12, alignItems: 'center' }}>
-            <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 10 }}>Game Over</Text>
-            <Text style={{ fontSize: 14, color: '#666', textAlign: 'center' }}>
-              Press reset to play again
-            </Text>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.gameOverTitle}>Game Over</Text>
+            <Text style={styles.scoreSubtitle}>Final Score: {state.score}</Text>
+            <TouchableOpacity
+              onPress={onReset}
+              activeOpacity={0.8}
+              style={styles.button}
+              accessibilityRole="button"
+              accessibilityLabel="Play again"
+            >
+              <Text style={styles.buttonText}>PLAY AGAIN</Text>
+            </TouchableOpacity>
           </View>
         </View>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  modalCard: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 32,
+    paddingVertical: 32,
+    borderRadius: 24,
+    alignItems: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
+    width: '80%',
+    maxWidth: 320,
+  },
+  gameOverTitle: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1A1A1A',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  scoreSubtitle: {
+    fontSize: 16,
+    color: '#666666',
+    fontWeight: '600',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#FF6B6B',
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 30,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+});
