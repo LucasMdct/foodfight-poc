@@ -1,5 +1,7 @@
 import React from 'react';
-import { Group, Circle, Oval, Path, Skia, vec } from '@shopify/react-native-skia';
+import {
+  Group, Circle, Oval, RoundedRect, Path, Skia, vec,
+} from '@shopify/react-native-skia';
 import { useDerivedValue } from 'react-native-reanimated';
 import { useWalkCycle } from '../useWalkCycle';
 import { foodiePalette } from '../palette';
@@ -12,20 +14,20 @@ export const Alface = () => {
   const { legSwing, armSwing, bobY } = useWalkCycle();
   const legL = useDerivedValue(() => [{ rotate: legSwing.value }]);
   const legR = useDerivedValue(() => [{ rotate: -legSwing.value }]);
-  const armL = useDerivedValue(() => [{ rotate: armSwing.value }]);
-  const armR = useDerivedValue(() => [{ rotate: -armSwing.value }]);
+  const armL = useDerivedValue(() => [{ rotate: -armSwing.value }]);
+  const armR = useDerivedValue(() => [{ rotate: armSwing.value }]);
   const bob = useDerivedValue(() => [{ translateY: bobY.value }]);
 
   return (
     <Group>
       {/* left leg */}
       <Group origin={vec(48, 114)} transform={legL}>
-        <Oval x={42} y={108} width={12} height={26} color={c.legFill} />
+        <RoundedRect x={42} y={108} width={12} height={26} r={6} color={c.legFill} />
         <Oval x={37} y={129.5} width={22} height={13} color={c.footFill} />
       </Group>
       {/* right leg */}
       <Group origin={vec(72, 114)} transform={legR}>
-        <Oval x={66} y={108} width={12} height={26} color={c.legFill} />
+        <RoundedRect x={66} y={108} width={12} height={26} r={6} color={c.legFill} />
         <Oval x={61} y={129.5} width={22} height={13} color={c.footFill} />
       </Group>
       {/* body (bobs) */}
