@@ -3,7 +3,7 @@ export const theme = {
     brand: '#FF6B6B', brandShadow: '#E04F4F',
     positive: '#7BC950', positiveShadow: '#59A335',
     score: '#FFB627', scoreShadow: '#E09A10',
-    villain: '#9B5DE5',
+    villain: '#9B5DE5', villainBorder: '#E5D4F7',
     candyPink: '#FF7BAC', candyTeal: '#4ECDC4', candyTealDark: '#3BB8B0',
     donutBase: '#F4A259', sprinkleYellow: '#FFD23F',
     bg: '#FFF3E2', bgGradTop: '#FFE9C9', bgGradMid: '#FFF4E0', bgGradBottom: '#FFEFD6',
