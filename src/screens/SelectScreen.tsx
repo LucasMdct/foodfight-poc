@@ -116,6 +116,8 @@ export const SelectScreen = () => {
             <Text style={styles.speechText}>&quot;Ninguém escapa dos meus doces! Hahaha!&quot;</Text>
           </View>
         </View>
+
+        <Text style={styles.footer}>FOOD FIGHT · estilo v0.0.1</Text>
       </View>
     </LinearGradient>
   );

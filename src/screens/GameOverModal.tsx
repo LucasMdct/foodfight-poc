@@ -6,7 +6,7 @@ import { useGameStore } from '../store/gameStore';
 import { Foodie } from '../render/foodie/Foodie';
 import { makeStyles } from './GameOverModal.styles';
 
-const POP_DURATION_MS = 220;
+const POP_DURATION_MS = 350;
 
 export const GameOverModal = () => {
   const theme = useTheme();

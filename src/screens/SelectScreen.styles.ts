@@ -167,4 +167,12 @@ export const makeStyles = (theme: Theme) =>
       fontSize: 13,
       color: theme.colors.villain,
     },
+    footer: {
+      position: 'absolute',
+      bottom: 16,
+      left: 22,
+      fontFamily: theme.font.medium,
+      fontSize: 12,
+      color: theme.colors.textMuted,
+    },
   });
