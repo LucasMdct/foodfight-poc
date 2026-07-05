@@ -24,5 +24,6 @@ export const foodiePalette = {
     cup: '#D94F4F', cupDark: '#B93E3E', body: '#4A2C17', bodyHi: '#6B4226',
     hat: '#232323', hatBand: '#9B5DE5', eyeWhite: '#FFFFFF', eye: '#241206',
     monocle: '#FFD23F', wandStick: '#E8D9C0', wandCandy: '#FF7BAC', armFill: '#4A2C17',
+    sprinkleTeal: '#4ECDC4', sprinkleRed: '#FF6B6B',
   },
 } as const;

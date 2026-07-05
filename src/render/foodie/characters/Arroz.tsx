@@ -17,8 +17,8 @@ export const Arroz = () => {
   const { legSwing, armSwing, bobY } = useWalkCycle();
   const legL = useDerivedValue(() => [{ rotate: legSwing.value }]);
   const legR = useDerivedValue(() => [{ rotate: -legSwing.value }]);
-  const armL = useDerivedValue(() => [{ rotate: armSwing.value }]);
-  const armR = useDerivedValue(() => [{ rotate: -armSwing.value }]);
+  const armL = useDerivedValue(() => [{ rotate: -armSwing.value }]);
+  const armR = useDerivedValue(() => [{ rotate: armSwing.value }]);
   const bob = useDerivedValue(() => [{ translateY: bobY.value }]);
 
   return (

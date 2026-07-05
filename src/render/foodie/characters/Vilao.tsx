@@ -28,8 +28,8 @@ const smile = Skia.Path.MakeFromSVGString('M56 90 Q75 104 94 88')!;
 const tooth = Skia.Path.MakeFromSVGString('M84 92 L88 98 L91 90 Z')!;
 
 export const Vilao = () => {
-  const bobY = useBob(4, 900);
-  const wandSwing = useSwing(13, 700);
+  const bobY = useBob(3, 450);
+  const wandSwing = useSwing(13, 350);
   const bob = useDerivedValue(() => [{ translateY: bobY.value }]);
   const wand = useDerivedValue(() => [{ rotate: wandSwing.value }]);
 
@@ -69,7 +69,7 @@ export const Vilao = () => {
         <RoundedRect x={88} y={44} width={9} height={3.5} r={1.75} color={c.monocle} />
       </Group>
       <Group origin={vec(46, 89)} transform={[{ rotate: -30 * DEG }]}>
-        <RoundedRect x={42} y={88} width={9} height={3.5} r={1.75} color="#4ECDC4" />
+        <RoundedRect x={42} y={88} width={9} height={3.5} r={1.75} color={c.sprinkleTeal} />
       </Group>
       <Group origin={vec(104, 95)} transform={[{ rotate: 20 * DEG }]}>
         <RoundedRect x={100} y={94} width={9} height={3.5} r={1.75} color={c.hatBand} />
@@ -78,7 +78,7 @@ export const Vilao = () => {
         <RoundedRect x={66} y={104} width={9} height={3.5} r={1.75} color={c.monocle} />
       </Group>
       <Group origin={vec(102, 61)} transform={[{ rotate: 40 * DEG }]}>
-        <RoundedRect x={98} y={60} width={9} height={3.5} r={1.75} color="#FF6B6B" />
+        <RoundedRect x={98} y={60} width={9} height={3.5} r={1.75} color={c.sprinkleRed} />
       </Group>
       <Group origin={vec(40, 75)} transform={[{ rotate: 60 * DEG }]}>
         <RoundedRect x={36} y={74} width={9} height={3.5} r={1.75} color={c.monocle} />
