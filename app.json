@@ -28,6 +28,9 @@
         "projectId": "07f21e8e-4cf5-4786-985d-84405fe4b26c"
       }
     },
-    "owner": "medeirosdev"
+    "owner": "medeirosdev",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
