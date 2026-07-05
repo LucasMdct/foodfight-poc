@@ -1,51 +1,32 @@
+import theme from '../theme/tokens';
+
 export const GAME_CONSTANTS = {
-  // Screen dimensions (approximate, will be adjusted to device)
-  SCREEN_WIDTH: 400,
-  SCREEN_HEIGHT: 800,
+  LANE_COUNT: 3,
+  HERO_X_RATIO: 0.09, // hero left = 0.09 * width
+  HERO_WIDTH: 96,
+  HERO_HEIGHT: 120,
+  HERO_HITBOX_PADDING: 18, // from design collision math
+  HERO_LANE_TRANSITION_DURATION: 130, // ms (design: 130ms lane switch)
+  CANDY_SIZE: 52,
+  CANDY_BASE_SPEED: 340, // px/s
+  CANDY_SPEED_RAMP_MAX: 260,
+  CANDY_SPEED_RAMP_RATE: 0.006,
+  SPAWN_INTERVAL: 900, // ms
+  SPAWN_INTERVAL_MIN: 420,
+  SPAWN_INTERVAL_RAMP_RATE: 0.004,
+  OBSTACLE_MAX_ACTIVE: 8, // design pool size
+  INVULN_DURATION: 1400, // ms
+  SCORE_PER_DODGE: 10,
+  TARGET_FPS: 60,
+  FRAME_TIME_MS: 1000 / 60,
+  COLORS: theme.colors,
 
-  // Lane configuration
-  LANES: {
-    TOP: 'top',
-    MIDDLE: 'middle',
-    BOTTOM: 'bottom',
-  },
-
-  LANE_HEIGHT: 150,
-  LANE_Y_POSITIONS: {
-    top: 100,
-    middle: 300,
-    bottom: 500,
-  } as Record<'top' | 'middle' | 'bottom', number>,
-
-  // Hero configuration
-  HERO_WIDTH: 50,
-  HERO_HEIGHT: 60,
-  HERO_STARTING_X: 50,
-  HERO_HITBOX_PADDING: 10,
-  HERO_LANE_TRANSITION_DURATION: 100, // ms
-
-  // Obstacle configuration
+  // legacy — remover na Task 9 (usado apenas por src/hooks/useRunnerEngine.ts, será reescrito)
   OBSTACLE_WIDTH: 40,
   OBSTACLE_HEIGHT: 60,
-  OBSTACLE_SPEED: 300, // pixels per second
-  OBSTACLE_SPAWN_INTERVAL: 800, // ms
-  OBSTACLE_MAX_ACTIVE: 15, // prevent too many at once
-
-  // Collision feedback
-  COLLISION_FLICKER_DURATION: 1500, // ms
+  OBSTACLE_SPEED: 300,
+  OBSTACLE_SPAWN_INTERVAL: 800,
+  HERO_STARTING_X: 50,
+  COLLISION_FLICKER_DURATION: 1500,
   COLLISION_FLICKER_COUNT: 4,
-  COLLISION_DAMAGE: 25, // health reduction
-
-  // Colors
-  COLORS: {
-    HERO: '#FF6B6B',
-    OBSTACLE: '#4ECDC4',
-    LANE_BG: 'rgba(200, 200, 200, 0.15)',
-    CANVAS_BG: '#FFFFFF',
-    TEXT: '#000000',
-  },
-
-  // Performance targets
-  TARGET_FPS: 60,
-  FRAME_TIME_MS: 1000 / 60, // ~16.67ms
 };
