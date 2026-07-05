@@ -7,6 +7,19 @@
 
 ---
 
+## v0.0.1
+
+A partir da v0.0.1, o jogo deixou de ser a POC acima e passou a ser a implementação completa do design `FoodFight v0.0.1.dc.html`: tela de **seleção de personagem** (Alface, Feijão ou Arroz, cada um com 3 vidas), o vilão **Barão Brigadeiro** arremessando doces, **walk cycle** animado dos heróis, doces (pirulito, bala, donut) caindo em 3 raias sobre a mesa de cozinha rolante, **HUD** com vidas/pontuação/nome do herói, e tela de **Game Over** com pontuação, recorde e opções de jogar de novo ou trocar de herói.
+
+Esta versão **substitui** as telas antigas da POC: a tela de loading agora é temática (portal animado, barra de progresso), a orientação é **landscape travada** (não há mais tela de escolha de orientação Portrait/Landscape) e todo o visual usa um tema centralizado (`src/theme`) com fonte Fredoka.
+
+**Débitos conhecidos (known minor):**
+- A defasagem de *bob* entre os heróis do walk cycle (o `animation-delay` por herói do design) não foi replicada — no app, os heróis bobam em uníssono.
+- `assets/android-icon-monochrome.png` ainda usa a arte antiga (afeta apenas o ícone "themed" do Android 13+).
+- QA manual em dispositivo ARM (spin do vilão, flicker de invulnerabilidade em 1.4s, swipe de troca de raia em 130ms, scroll do fundo só na tela de jogo, FPS ≈ 60) está **pendente** — não havia device/emulador disponível nesta sessão.
+
+---
+
 ## 📖 Documentação Completa
 
 Este projeto inclui documentação detalhada estruturada via **Spec-Driven Development**:
