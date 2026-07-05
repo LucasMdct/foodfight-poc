@@ -86,7 +86,7 @@ export const useRunnerEngine = (screenWidth: number, screenHeight: number): Runn
   }, []);
 
   // Keep the UI-thread game-over flag in sync with the store.
-  const isGameOver = useGameStore((s) => s.state.isGameOver);
+  const isGameOver = useGameStore((s) => s.state.screen === 'over');
   useEffect(() => {
     gameOver.value = isGameOver ? 1 : 0;
   }, [isGameOver, gameOver]);
