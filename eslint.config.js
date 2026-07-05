@@ -17,6 +17,7 @@ module.exports = defineConfig([
     rules: {
       "react-hooks/immutability": "off",
       "react-hooks/refs": "off",
+      "import/no-named-as-default": "off",
     }
   }
 ]);
