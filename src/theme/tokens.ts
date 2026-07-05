@@ -13,6 +13,7 @@ export const theme = {
     textStrong: '#5A4327', textBody: '#8A6A45', textMuted: '#B08F63',
     overlay: 'rgba(70,40,10,0.45)',
     shadowWarm: 'rgba(90,60,20,0.14)',
+    heroShadow: 'rgba(90,50,10,0.18)',
     laneDivider: 'rgba(138,90,52,0.28)',
     tableGrid: 'rgba(255,107,107,0.13)',
   },
