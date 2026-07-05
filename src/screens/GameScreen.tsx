@@ -14,6 +14,7 @@ import { Hud } from '../hud/Hud';
 import { GameOverModal } from './GameOverModal';
 import { GAME_CONSTANTS } from '../types/constants';
 import type { Who } from '../types/game';
+import theme from '../theme/tokens';
 
 // Candy type is fixed per pool-slot index (not tracked by the engine): slot i
 // is always ['lolli','candy','donut'][i % 3], matching the mockup exactly and
@@ -108,7 +109,7 @@ export const GameScreen = () => {
               y={GAME_CONSTANTS.HERO_HEIGHT - 14}
               width={GAME_CONSTANTS.HERO_WIDTH - 16}
               height={16}
-              color="rgba(0,0,0,0.15)"
+              color={theme.colors.heroShadow}
             />
             <Foodie who={who} size={96} />
           </Group>
@@ -120,7 +121,7 @@ export const GameScreen = () => {
 
         {__DEV__ && (
           <View style={{ position: 'absolute', top: 6, left: 6 }} pointerEvents="none">
-            <Text style={{ color: '#fff', fontSize: 11 }}>{fps} FPS</Text>
+            <Text style={{ color: theme.colors.surface, fontSize: 11 }}>{fps} FPS</Text>
           </View>
         )}
       </View>
