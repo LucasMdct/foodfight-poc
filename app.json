@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "foodfight-poc",
+    "name": "FoodFight",
     "slug": "foodfight-poc",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
@@ -13,7 +13,7 @@
     "android": {
       "package": "com.foodfight.poc",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#FFF3E2",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
