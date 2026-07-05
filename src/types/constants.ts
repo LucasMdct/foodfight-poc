@@ -20,13 +20,4 @@ export const GAME_CONSTANTS = {
   TARGET_FPS: 60,
   FRAME_TIME_MS: 1000 / 60,
   COLORS: theme.colors,
-
-  // legacy — remover na Task 9 (usado apenas por src/hooks/useRunnerEngine.ts, será reescrito)
-  OBSTACLE_WIDTH: 40,
-  OBSTACLE_HEIGHT: 60,
-  OBSTACLE_SPEED: 300,
-  OBSTACLE_SPAWN_INTERVAL: 800,
-  HERO_STARTING_X: 50,
-  COLLISION_FLICKER_DURATION: 1500,
-  COLLISION_FLICKER_COUNT: 4,
 };
