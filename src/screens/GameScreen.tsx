@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { Canvas, Group, Oval } from '@shopify/react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
@@ -58,15 +58,35 @@ export const GameScreen = () => {
   const fps = useGameStore((s) => s.state.fps);
   const actions = useGameStore((s) => s.actions);
 
+  // The control hint hides after the player's first lane change and reappears
+  // on a fresh match. `hasMoved` is discrete (flips at most once per match), so
+  // it never causes a per-frame re-render.
+  const [hasMoved, setHasMoved] = useState(false);
+
   // GameScreen stays mounted across 'game' <-> 'over' (App.tsx renders it for
   // both), so a future "Play Again" re-enters 'game' without a remount.
   // Resetting on every transition into 'game' covers both the initial mount
   // and any later restart with one code path.
   useEffect(() => {
-    if (screen === 'game') engine.reset();
+    if (screen === 'game') {
+      engine.reset();
+      // Reset-on-transition sits with the imperative engine reset, which must
+      // live in the effect; suppressing here keeps both in one place.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setHasMoved(false);
+    }
     // engine.reset is stable for the component's lifetime; only `screen` should retrigger this.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen]);
+
+  // Wrap the engine's lane move so the first interaction dismisses the hint.
+  const handleMoveLane = useCallback(
+    (direction: -1 | 1) => {
+      setHasMoved(true);
+      engine.moveLane(direction);
+    },
+    [engine]
+  );
 
   const villainFloat = useBob(12, 900);
   const villainX = width - 100;
@@ -82,7 +102,7 @@ export const GameScreen = () => {
   ]);
 
   return (
-    <SwipeHandler onMoveLane={engine.moveLane}>
+    <SwipeHandler onMoveLane={handleMoveLane}>
       <View style={{ flex: 1 }}>
         <Canvas style={{ flex: 1 }}>
           <Tablecloth width={width} height={height} scrollX={engine.scrollX} />
@@ -115,7 +135,14 @@ export const GameScreen = () => {
           </Group>
         </Canvas>
 
-        <Hud who={who} name={HERO_NAME[who]} lives={lives} score={score} onExit={actions.toSelect} />
+        <Hud
+          who={who}
+          name={HERO_NAME[who]}
+          lives={lives}
+          score={score}
+          onExit={actions.toSelect}
+          showHint={!hasMoved}
+        />
 
         {screen === 'over' && <GameOverModal />}
 

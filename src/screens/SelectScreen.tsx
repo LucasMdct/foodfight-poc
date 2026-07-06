@@ -31,7 +31,7 @@ export const SelectScreen = () => {
   const round = (n: number) => Math.round(n * scale);
   const cardFoodieSize = round(120);
   const heartSize = round(20);
-  const villainSize = round(86);
+  const villainSize = round(120);
 
   const who = useGameStore((s) => s.state.who);
   const actions = useGameStore((s) => s.actions);
