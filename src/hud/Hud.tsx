@@ -13,6 +13,8 @@ interface HudProps {
   lives: number;
   score: number;
   onExit: () => void;
+  // Control hint stays up until the player's first move, then hides.
+  showHint?: boolean;
 }
 
 /**
@@ -21,7 +23,7 @@ interface HudProps {
  * regular, low-frequency subscription) — nothing here touches per-frame
  * shared values, so it re-renders only on hit/score/exit, never per frame.
  */
-export const Hud = ({ who, name, lives, score, onExit }: HudProps) => {
+export const Hud = ({ who, name, lives, score, onExit, showHint = true }: HudProps) => {
   const theme = useTheme();
   const styles = useMemo(() => makeStyles(theme), [theme]);
 
@@ -55,11 +57,15 @@ export const Hud = ({ who, name, lives, score, onExit }: HudProps) => {
         </View>
       </View>
 
-      <View style={styles.hintWrap}>
-        <View style={styles.hintPill}>
-          <Text style={styles.hintText}>Deslize ou toque para cima/baixo para trocar de fileira</Text>
+      {showHint && (
+        <View style={styles.hintWrap}>
+          <View style={styles.hintPill}>
+            <Text style={styles.hintText}>
+              Deslize ou toque para cima/baixo para trocar de fileira
+            </Text>
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };
