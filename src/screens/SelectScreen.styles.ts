@@ -157,8 +157,8 @@ export const makeStyles = (theme: Theme, s: number) => {
       opacity: 0.95,
     },
     villainCanvas: {
-      width: r(120),
-      height: r(128),
+      width: r(160),
+      height: r(168),
     },
     speechBubble: {
       backgroundColor: theme.colors.surface,
