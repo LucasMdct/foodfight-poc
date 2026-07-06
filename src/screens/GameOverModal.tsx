@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated as RNAnimated, Pressable, Text, View } from 'react-native';
 import { Canvas } from '@shopify/react-native-skia';
-import { useTheme } from '../theme';
+import { useTheme, useUiScale } from '../theme';
 import { useGameStore } from '../store/gameStore';
 import { Foodie } from '../render/foodie/Foodie';
 import { makeStyles } from './GameOverModal.styles';
@@ -10,7 +10,12 @@ const POP_DURATION_MS = 350;
 
 export const GameOverModal = () => {
   const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+  // Same fit-to-screen scaling as SelectScreen: the modal's vertical stack
+  // (villain + title + stats + two buttons) overflows a landscape phone and
+  // would clip the buttons, so scale it down to always fit.
+  const scale = useUiScale();
+  const styles = useMemo(() => makeStyles(theme, scale), [theme, scale]);
+  const villainSize = Math.round(110 * scale);
 
   const score = useGameStore((s) => s.state.score);
   const best = useGameStore((s) => s.state.best);
@@ -39,7 +44,7 @@ export const GameOverModal = () => {
     <View style={styles.overlay} pointerEvents="auto">
       <RNAnimated.View style={[styles.card, { opacity: pop, transform: [{ scale: cardScale }] }]}>
         <Canvas style={styles.villainCanvas}>
-          <Foodie who="vilao" size={110} />
+          <Foodie who="vilao" size={villainSize} />
         </Canvas>
 
         <Text style={styles.title}>Doce demais!</Text>

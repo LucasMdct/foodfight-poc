@@ -2,8 +2,12 @@ import { StyleSheet } from 'react-native';
 import { Theme } from '../theme';
 
 // Design source: FoodFight v0.0.1.dc.html lines 159-181 ("FIM DE JOGO" overlay).
-export const makeStyles = (theme: Theme) =>
-  StyleSheet.create({
+//
+// `s` is the shared responsive scale (see useUiScale): the modal's vertical
+// stack would otherwise clip its buttons on a landscape phone.
+export const makeStyles = (theme: Theme, s: number) => {
+  const r = (n: number) => Math.round(n * s);
+  return StyleSheet.create({
     overlay: {
       position: 'absolute',
       top: 0,
@@ -18,11 +22,11 @@ export const makeStyles = (theme: Theme) =>
     card: {
       backgroundColor: theme.colors.surfaceAlt,
       borderRadius: theme.radii.xxl,
-      paddingVertical: theme.space.xl,
+      paddingVertical: r(theme.space.xl),
       paddingHorizontal: theme.space.xl + theme.space.md,
       alignItems: 'center',
-      gap: theme.space.md,
-      maxWidth: '86%',
+      gap: r(theme.space.md),
+      maxWidth: '92%',
       shadowColor: theme.colors.shadowWarm,
       shadowOffset: { width: 0, height: 24 },
       shadowOpacity: 1,
@@ -30,19 +34,19 @@ export const makeStyles = (theme: Theme) =>
       elevation: 10,
     },
     villainCanvas: {
-      width: 110,
-      height: 120,
+      width: r(110),
+      height: r(120),
     },
     title: {
       fontFamily: theme.font.bold,
-      fontSize: 36,
-      lineHeight: 40,
+      fontSize: Math.max(24, r(36)),
+      lineHeight: Math.max(26, r(40)),
       color: theme.colors.brand,
       textAlign: 'center',
     },
     subtitle: {
       fontFamily: theme.font.medium,
-      fontSize: 16,
+      fontSize: Math.max(13, r(16)),
       color: theme.colors.textBody,
       textAlign: 'center',
     },
@@ -55,7 +59,7 @@ export const makeStyles = (theme: Theme) =>
       alignItems: 'center',
       backgroundColor: theme.colors.bg,
       borderRadius: theme.radii.md,
-      paddingVertical: theme.space.sm,
+      paddingVertical: r(theme.space.sm),
       paddingHorizontal: theme.space.lg,
     },
     statLabel: {
@@ -67,7 +71,7 @@ export const makeStyles = (theme: Theme) =>
     },
     statValue: {
       fontFamily: theme.font.bold,
-      fontSize: 28,
+      fontSize: Math.max(20, r(28)),
       color: theme.colors.textStrong,
     },
     buttonsRow: {
@@ -79,7 +83,7 @@ export const makeStyles = (theme: Theme) =>
       minHeight: 44,
       justifyContent: 'center',
       backgroundColor: theme.colors.positive,
-      paddingVertical: 13,
+      paddingVertical: r(13),
       paddingHorizontal: theme.space.xl,
       borderRadius: theme.radii.pill,
       shadowColor: theme.colors.positiveShadow,
@@ -90,7 +94,7 @@ export const makeStyles = (theme: Theme) =>
     },
     playAgainText: {
       fontFamily: theme.font.bold,
-      fontSize: 19,
+      fontSize: Math.max(16, r(19)),
       color: theme.colors.surface,
       textAlign: 'center',
     },
@@ -100,14 +104,15 @@ export const makeStyles = (theme: Theme) =>
       backgroundColor: theme.colors.surface,
       borderWidth: 2,
       borderColor: theme.colors.border,
-      paddingVertical: 13,
+      paddingVertical: r(13),
       paddingHorizontal: theme.space.lg,
       borderRadius: theme.radii.pill,
     },
     switchHeroText: {
       fontFamily: theme.font.semibold,
-      fontSize: 19,
+      fontSize: Math.max(16, r(19)),
       color: theme.colors.textBody,
       textAlign: 'center',
     },
   });
+};

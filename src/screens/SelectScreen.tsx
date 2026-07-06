@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated as RNAnimated, Pressable, Text, View } from 'react-native';
 import { Canvas } from '@shopify/react-native-skia';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../theme';
+import { useTheme, useUiScale } from '../theme';
 import { useGameStore } from '../store/gameStore';
 import { Foodie } from '../render/foodie/Foodie';
 import { Heart } from '../hud/Heart';
@@ -22,7 +22,16 @@ const PULSE_DURATION_MS = 800;
 
 export const SelectScreen = () => {
   const theme = useTheme();
-  const styles = useMemo(() => makeStyles(theme), [theme]);
+
+  // Responsive scale: the full-size layout is ~560px tall, which overflows a
+  // landscape phone (~360-430px) and pushes "JOGAR!" off-screen. Scale every
+  // sizing metric by the viewport height so the whole screen always fits.
+  const scale = useUiScale();
+  const styles = useMemo(() => makeStyles(theme, scale), [theme, scale]);
+  const round = (n: number) => Math.round(n * scale);
+  const cardFoodieSize = round(120);
+  const heartSize = round(20);
+  const villainSize = round(86);
 
   const who = useGameStore((s) => s.state.who);
   const actions = useGameStore((s) => s.actions);
@@ -62,8 +71,8 @@ export const SelectScreen = () => {
           <Text style={styles.title}>FOOD FIGHT</Text>
           <View style={styles.subtitlePill}>
             <Text style={styles.subtitleText}>
-              Desvie dos doces do{' '}
-              <Text style={styles.subtitleVillain}>Barão Brigadeiro</Text> e chegue ao prato!
+              Desvie dos doces do <Text style={styles.subtitleVillain}>Barão Brigadeiro</Text> e
+              chegue ao prato!
             </Text>
           </View>
         </View>
@@ -83,14 +92,14 @@ export const SelectScreen = () => {
                 accessibilityState={{ selected }}
               >
                 <Canvas style={styles.cardCanvas}>
-                  <Foodie who={c.who} size={120} />
+                  <Foodie who={c.who} size={cardFoodieSize} />
                 </Canvas>
                 <Text style={[styles.cardName, { color: c.nameColor }]}>{c.name}</Text>
                 <Text style={styles.cardTagline}>{c.tagline}</Text>
                 <View style={styles.heartsRow}>
-                  <Heart filled size={20} />
-                  <Heart filled size={20} />
-                  <Heart filled size={20} />
+                  <Heart filled size={heartSize} />
+                  <Heart filled size={heartSize} />
+                  <Heart filled size={heartSize} />
                 </View>
               </Pressable>
             );
@@ -110,10 +119,12 @@ export const SelectScreen = () => {
 
         <View style={styles.villainCorner} pointerEvents="none">
           <Canvas style={styles.villainCanvas}>
-            <Foodie who="vilao" size={86} />
+            <Foodie who="vilao" size={villainSize} />
           </Canvas>
           <View style={styles.speechBubble}>
-            <Text style={styles.speechText}>&quot;Ninguém escapa dos meus doces! Hahaha!&quot;</Text>
+            <Text style={styles.speechText}>
+              &quot;Ninguém escapa dos meus doces! Hahaha!&quot;
+            </Text>
           </View>
         </View>
 

@@ -2,8 +2,14 @@ import { StyleSheet } from 'react-native';
 import { Theme } from '../theme';
 
 // Design source: FoodFight v0.0.1.dc.html lines 28-80.
-export const makeStyles = (theme: Theme) =>
-  StyleSheet.create({
+//
+// `s` is a responsive scale factor (0.5..1) derived from the viewport height in
+// the component: on short landscape phones the full-size layout (~560px tall)
+// would push the "JOGAR!" button off-screen, so every height-consuming metric
+// (title, gaps, paddings, card canvas, button) is scaled by `s` to always fit.
+export const makeStyles = (theme: Theme, s: number) => {
+  const r = (n: number) => Math.round(n * s);
+  return StyleSheet.create({
     gradient: {
       flex: 1,
     },
@@ -11,8 +17,9 @@ export const makeStyles = (theme: Theme) =>
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: theme.space.lg,
-      padding: theme.space.lg,
+      gap: r(theme.space.lg),
+      paddingVertical: r(theme.space.md),
+      paddingHorizontal: theme.space.lg,
     },
     // Two soft decorative circles from the design (top-left yellow, bottom-right
     // green). Colors reuse existing theme tokens, dimmed via `opacity` so no new
@@ -39,12 +46,12 @@ export const makeStyles = (theme: Theme) =>
     },
     titleWrap: {
       alignItems: 'center',
-      gap: 6,
+      gap: 4,
     },
     title: {
       fontFamily: theme.font.bold,
-      fontSize: 52,
-      lineHeight: 56,
+      fontSize: r(52),
+      lineHeight: r(56),
       letterSpacing: 2,
       color: theme.colors.brand,
       textShadowColor: theme.colors.brandShadow,
@@ -62,7 +69,7 @@ export const makeStyles = (theme: Theme) =>
     },
     subtitleText: {
       fontFamily: theme.font.medium,
-      fontSize: 15,
+      fontSize: Math.max(12, r(15)),
       color: theme.colors.textBody,
       textAlign: 'center',
     },
@@ -72,24 +79,24 @@ export const makeStyles = (theme: Theme) =>
     },
     chooseText: {
       fontFamily: theme.font.semibold,
-      fontSize: 22,
+      fontSize: Math.max(15, r(22)),
       color: theme.colors.textStrong,
     },
     cardsRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
+      flexWrap: 'nowrap',
       justifyContent: 'center',
-      gap: 22,
+      gap: r(22),
     },
     card: {
-      width: 190,
+      width: r(190),
       alignItems: 'center',
-      gap: 8,
+      gap: r(6),
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.xl,
-      paddingTop: 20,
-      paddingHorizontal: 14,
-      paddingBottom: 16,
+      paddingTop: r(18),
+      paddingHorizontal: r(12),
+      paddingBottom: r(14),
       borderWidth: 4,
       borderColor: 'transparent',
       shadowColor: theme.colors.shadowWarm,
@@ -102,16 +109,16 @@ export const makeStyles = (theme: Theme) =>
       borderColor: theme.colors.score,
     },
     cardCanvas: {
-      width: 120,
-      height: 150,
+      width: r(120),
+      height: r(150),
     },
     cardName: {
       fontFamily: theme.font.bold,
-      fontSize: 24,
+      fontSize: Math.max(16, r(24)),
     },
     cardTagline: {
       fontFamily: theme.font.medium,
-      fontSize: 13,
+      fontSize: Math.max(11, r(13)),
       color: theme.colors.textMuted,
       textAlign: 'center',
     },
@@ -121,11 +128,11 @@ export const makeStyles = (theme: Theme) =>
     },
     jogarBtn: {
       alignSelf: 'center',
-      minHeight: 56,
+      minHeight: r(56),
       justifyContent: 'center',
       backgroundColor: theme.colors.positive,
-      paddingVertical: 16,
-      paddingHorizontal: 58,
+      paddingVertical: r(14),
+      paddingHorizontal: r(58),
       borderRadius: theme.radii.pill,
       shadowColor: theme.colors.positiveShadow,
       shadowOffset: { width: 0, height: 6 },
@@ -135,23 +142,23 @@ export const makeStyles = (theme: Theme) =>
     },
     jogarText: {
       fontFamily: theme.font.bold,
-      fontSize: 26,
+      fontSize: Math.max(18, r(26)),
       letterSpacing: 1,
       color: theme.colors.surface,
       textAlign: 'center',
     },
     villainCorner: {
       position: 'absolute',
-      bottom: 18,
-      right: 22,
+      bottom: 12,
+      right: 16,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
+      gap: 8,
       opacity: 0.95,
     },
     villainCanvas: {
-      width: 86,
-      height: 96,
+      width: r(86),
+      height: r(96),
     },
     speechBubble: {
       backgroundColor: theme.colors.surface,
@@ -169,10 +176,11 @@ export const makeStyles = (theme: Theme) =>
     },
     footer: {
       position: 'absolute',
-      bottom: 16,
-      left: 22,
+      bottom: 14,
+      left: 18,
       fontFamily: theme.font.medium,
       fontSize: 12,
       color: theme.colors.textMuted,
     },
   });
+};
