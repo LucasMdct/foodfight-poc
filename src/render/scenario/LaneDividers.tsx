@@ -11,12 +11,10 @@ export const LaneDividers = ({ width, height }: { width: number; height: number 
   const y1 = height / 3;
   const y2 = (2 * height) / 3;
 
-  const line = (y: number) => {
-    const path = Skia.Path.Make();
-    path.moveTo(0, y);
-    path.lineTo(width, y);
-    return path;
-  };
+  // Build the horizontal rule via an SVG path string (Skia.Path.MakeFromSVGString)
+  // instead of the imperative SkPath.moveTo()/lineTo(), which are deprecated in
+  // react-native-skia and slated for removal.
+  const line = (y: number) => Skia.Path.MakeFromSVGString(`M0 ${y} L ${width} ${y}`)!;
 
   return (
     <Group>
