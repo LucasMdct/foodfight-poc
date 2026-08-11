@@ -1,464 +1,119 @@
-# 🍕 Food Fight - React Native Skia POC
+# Food Fight — Runner POC
 
-🎮 **Proof of Concept** de um **endless runner mobile** usando Expo e React Native Skia.
+Technical proof of concept for an endless runner built with **Expo SDK 56**, **React Native Skia** and **Reanimated**.
 
-**Status:** ✅ **Concluído** (Testado em Android ARM)  
-**Conclusão:** POC validou mecânicas core. Limitação: FPS < 60 em hardware ARM (requer WebGL custom ou Godot para production)
-
----
-
-## 📖 Documentação Completa
-
-Este projeto inclui documentação detalhada estruturada via **Spec-Driven Development**:
-
-| Documento | Descrição |
-|-----------|-----------|
-| **[POC_GUIDE.md](./POC_GUIDE.md)** | Guia passo-a-passo completo (Fases 1-6) com implementação detalhada |
-| **[ARCHITECTURE.md](./ARCHITECTURE.md)** | Arquitetura técnica, decisões de design, game loop |
-| **[README.md](./README.md)** | Este arquivo - quick start e visão geral |
+**Status:** concluded — see [Results](./docs/results.md)
+**Version:** 1.0.0 ([changelog](./CHANGELOG.md))
+**Verdict:** core mechanics validated. Frame rate on mid-range ARM hardware settles at **30–50 fps**, below the 60 fps target. Shipping this stack to production would require a different rendering engine.
 
 ---
 
-## 📋 Resultado Final dos Testes
+## What this POC answers
 
-### ✅ O que foi entregue
+One question: *can React Native Skia run the gameplay loop at 60 fps on a mid-range device, before we invest in the full game?*
 
-| Feature | Status |
-|---------|--------|
-| Endless runner base (3 lanes) | ✅ Completo |
-| Sistem de colisão | ✅ Funcional |
-| Coleta de alimentos | ✅ Implementado |
-| Seleção de orientação (Portrait/Landscape) | ✅ Completo |
-| Loading screen com animação | ✅ Pronto |
-| Play Again button | ✅ Pronto |
-| TypeScript tipagem total | ✅ Completo |
+Five acceptance criteria were defined up front. Four passed, one failed:
 
-### 🧪 Teste em Dispositivo ARM Real
+| Criterion | Target | Measured | Result |
+|---|---|---|---|
+| Frame rate | ≥ 55 fps | 30–50 fps | ❌ |
+| Swipe latency | < 100 ms | no perceptible lag | ✅ |
+| Collision accuracy | no false positives/negatives | accurate | ✅ |
+| Memory | stable over 2+ min | stable, no leaks | ✅ |
+| Stability | zero crashes | zero after fixes | ✅ |
 
-**Device:** Android Físico (ARM)  
-**Data:** 2026-07-04  
-**Build:** APK Release após otimizações
-
-| Métrica | Resultado | Status |
-|---------|-----------|--------|
-| **FPS** | ~30-50 | ⚠️ Abaixo de 60 |
-| **Colisões** | Precisas | ✅ Correto |
-| **Memory** | Estável | ✅ Sem leaks |
-| **Crashes** | Resolvido | ✅ Nenhum |
-| **Responsividade** | Boa | ✅ OK |
-
-### 🎯 Descoberta Principal
-
-> **FPS < 60 é limitação da engine, não bug**
-> 
-> Reanimated 3 + Skia Canvas em dispositivos ARM médios não consegue manter 60fps.
-> Para produção seria necessário: WebGL engine customizada, C++ native, ou usar Godot.
+Full measurement conditions and analysis: [`docs/results.md`](./docs/results.md).
 
 ---
 
-## 🎯 Objetivo (Original)
+## Quick start
 
-Validar 3 requisitos críticos **antes** de construir o jogo completo:
-
-✅ **Performance:** 60fps estável em mid-range devices  
-✅ **Input Latency:** Swipe response < 100ms  
-✅ **Memory:** Sem leaks após 2+ min gameplay
-
----
-
-## 🚀 Quick Start
-
-### 1. Instalação de Dependências
+Requires Node 20+, and Xcode or Android Studio for native builds.
 
 ```bash
-# Instalar todas as dependências (incluindo gesture handler)
 npm install
-
-# Para iOS, instalar pods
-cd ios && pod install && cd ..
-```
-
-**Dependências principais:**
-- `@shopify/react-native-skia` - Renderização 2D de alta performance
-- `react-native-reanimated` - Animações no thread nativo
-- `react-native-gesture-handler` - Detecção de gestos (swipe)
-- `zustand` - State management leve
-
----
-
-### 2. Rodar no Dispositivo
-
-#### iOS (Real Device)
-```bash
+npm run android   # physical device recommended
 npm run ios
-# ou
-expo start --ios
+npm run web       # renders, but NOT valid for perf measurement
 ```
 
-#### Android (Real Device)
-```bash
-npm run android
-# ou
-expo start --android
-```
+`npm run lint` runs ESLint (expo flat config).
 
-#### Web (Testes Rápidos - não é válido para perf validation)
-```bash
-npm run web
-```
+> Frame-rate numbers are only meaningful on a **physical device with a release build** and the remote JS debugger disabled. Emulators and Metro dev builds are not representative.
 
 ---
 
-## 🎮 Como Jogar
+## How to play
 
-| Ação | Resultado |
-|------|-----------|
-| **Swipe UP** | Move hero para cima (lane) |
-| **Swipe DOWN** | Move hero para baixo (lane) |
-| **Evite obstáculos** | Venha de encontro reduz health |
-| **Health = 0** | Game Over |
-
----
-
-## 📊 Aceitar/Rejeitar Critérios
-
-### ✅ Aprovação (POC success)
-
-```
-Todos os 5 critérios: VERDE
-├─ FPS ≥ 55 em device mid-range
-├─ Swipe latency < 100ms
-├─ Sem falsos positivos em colisão
-├─ Memory stable (< 50MB growth em 2 min)
-└─ iOS 15+ e Android 11+ funcionam
-```
-
-### ❌ Rejeição (Stack adjustment needed)
-
-```
-Qualquer critério VERMELHO:
-├─ FPS < 55? → Reduzir complexidade visual
-├─ Latency alto? → Profiler gesture handler
-├─ Memory leak? → Verificar obstacle cleanup
-└─ Crash? → Check native bridge
-```
+| Input | Effect |
+|---|---|
+| Swipe up | Hero moves one lane up |
+| Swipe down | Hero moves one lane down |
+| Hitting an obstacle | −25 health, 1.5 s invulnerability flicker |
+| Dodging an obstacle | +10 score |
+| Health reaches 0 | Game Over → Play Again |
 
 ---
 
-## 🔍 Debugging & Profiling
+## Project layout
 
-### Verificar FPS em Tempo Real
-
-A tela mostra **FPS** no canto superior direito:
-- **Verde (≥55):** OK ✅
-- **Amarelo (50-54):** Borderline ⚠️
-- **Vermelho (<50):** Falha ❌
-
-### iOS Profiler
-
-```bash
-# No Xcode
-Xcode → Product → Profile → select "Metal System Trace"
-# Verificar GPU % e frame times
+```
+App.tsx                     App state machine: loading → orientation → playing
+src/
+├── components/
+│   ├── GameCanvas.tsx      Skia canvas, HUD, Game Over modal
+│   ├── GameLoader.tsx      Animated loading screen
+│   ├── OrientationScreen.tsx  Portrait/landscape lock
+│   └── SwipeHandler.tsx    Fling gestures → lane changes
+├── hooks/
+│   └── useRunnerEngine.ts  The whole game loop (UI-thread worklet)
+├── store/
+│   └── gameStore.ts        Zustand: discrete state only
+└── types/
+    ├── constants.ts        Tunable game constants
+    └── game.ts             Game types
 ```
 
-### Android Profiler
-
-```bash
-# Via Android Studio
-Android Studio → Profiler → Memory/CPU
-adb shell dumpsys meminfo com.foodfight.poc
-```
-
-### React Native DevTools (Reanimated)
-
-```bash
-# Durante expo start, pressionar 'i' para iOS ou 'a' para Android
-# Depois: shake device → Open Debugger
-```
+Design rationale for this shape: [`docs/architecture.md`](./docs/architecture.md).
 
 ---
 
-## 📁 Estrutura do Projeto
+## Documentation
 
-```
-foodfight-poc/
-├── src/
-│   ├── components/
-│   │   ├── GameCanvas.tsx      # Renderização Skia
-│   │   └── SwipeHandler.tsx    # Input gestures
-│   ├── hooks/
-│   │   └── useGameLoop.ts      # Game loop principal
-│   ├── store/
-│   │   └── gameStore.ts        # Zustand state management
-│   ├── systems/
-│   │   ├── ObstacleSystem.ts   # Spawn/movimento obstáculos
-│   │   ├── CollisionSystem.ts  # Detecção colisão
-│   │   └── FpsCounter.ts       # FPS measurement
-│   └── types/
-│       ├── game.ts             # Game entity types
-│       └── constants.ts        # Game constants
-├── App.tsx                      # Root component
-├── index.ts                     # Expo entry point
-├── POC_GUIDE.md                # Full spec-driven guide
-├── ARCHITECTURE.md             # Technical architecture
-└── README.md                   # This file
-```
+Everything lives in [`docs/`](./docs/README.md). Start there.
+
+| Document | Use it for |
+|---|---|
+| [docs/README.md](./docs/README.md) | Documentation index |
+| [docs/architecture.md](./docs/architecture.md) | How the engine works and why |
+| [docs/results.md](./docs/results.md) | Measurements, findings, recommendation |
+| [docs/testing.md](./docs/testing.md) | Re-running the validation protocol |
+| [docs/troubleshooting.md](./docs/troubleshooting.md) | When something breaks |
+| [CHANGELOG.md](./CHANGELOG.md) | Version history |
 
 ---
 
-## 🔧 Configurações Ajustáveis
+## Tuning
 
-Todos em `src/types/constants.ts`:
+All knobs live in [`src/types/constants.ts`](./src/types/constants.ts):
 
-```typescript
-GAME_CONSTANTS = {
-  // Performance
-  OBSTACLE_SPEED: 300,          // px/s (↓ = easier, ↑ = harder)
-  OBSTACLE_SPAWN_INTERVAL: 800, // ms (↓ = more obstacles)
-  
-  // Timing
-  HERO_LANE_TRANSITION_DURATION: 100, // ms
-  COLLISION_FLICKER_DURATION: 1500,   // ms
-  
-  // Hitbox sensitivity
-  HERO_HITBOX_PADDING: 10,      // px (↓ = stricter collision)
-};
+```ts
+OBSTACLE_SPEED: 300,           // px/s — ↓ easier
+OBSTACLE_SPAWN_INTERVAL: 800,  // ms  — ↑ fewer obstacles
+OBSTACLE_MAX_ACTIVE: 15,       // pool size — ↓ fewer Skia rects
+HERO_HITBOX_PADDING: 10,       // px  — ↑ more forgiving collisions
 ```
 
-**Dica:** Se FPS cair para <55, reduzir `OBSTACLE_MAX_ACTIVE` ou aumentar `OBSTACLE_SPAWN_INTERVAL`.
+`OBSTACLE_MAX_ACTIVE` is the pool size, not a cap: that many `<Rect>` elements are always mounted and toggled via opacity. Lowering it is the cheapest frame-rate lever.
 
 ---
 
-## 📈 Metricas Esperadas (Mid-Range Device)
+## Out of scope
 
-| Metrica | Target | Good | Acceptable | Bad |
-|---------|--------|------|-----------|-----|
-| **FPS** | 60 | 58-60 | 55-58 | <55 ❌ |
-| **Swipe Latency** | <100ms | <50ms | 50-100ms | >100ms ❌ |
-| **Heap Memory** | Stable | +0-5MB/min | +5-20MB/min | +20MB/min ❌ |
-| **Obstacles** | 5-10 | ✅ | Depends | N/A |
+Deliberately excluded from the POC: real sprites, audio, menus, persistence, backend, level progression, multiple game modes.
 
 ---
 
-## 🐛 Troubleshooting
+## License
 
-### Problema: Game não inicia
-
-```bash
-# Limpar cache e reinstalar
-rm -rf node_modules package-lock.json
-npm install
-npm start
-```
-
-### Problema: FPS cai para <55
-
-**Checklist:**
-1. ✅ Desabilitar remote debugger (shake → "Disable Remote JS Debugging")
-2. ✅ Reduzir `OBSTACLE_MAX_ACTIVE` de 15 → 10
-3. ✅ Aumentar `OBSTACLE_SPAWN_INTERVAL` de 800ms → 1000ms
-4. ✅ Check Xcode Profiler → GPU % < 85%
-
-### Problema: Swipe não responde ou é lento
-
-```bash
-# Verificar gesture handler está integrado
-# Em App.tsx, GestureHandlerRootView deve envolver tudo
-
-# Rebuild native modules
-rm -rf node_modules
-npm install
-expo prebuild --clean
-```
-
-### Problema: Memory leak detectado
-
-**Check:** `adb shell dumpsys meminfo com.foodfight.poc`
-
-**Comum:**
-- ObstacleSystem não limpando obstacles off-screen → Fix: verificar `ObstacleSystem.update()`
-- Zustand store acumulando state antigo → Fix: adicionar `.subscribe()` cleanup
-
----
-
-## 🧪 Test Procedure (Spec-Driven)
-
-### Phase 1: Baseline (5 min)
-```
-1. Ligar device em modo voo (sem internet)
-2. Abrir app
-3. Deixar rodar 5 min sem interação
-4. Anotar:
-   - FPS médio?
-   - Memory mudou?
-```
-
-### Phase 2: Gameplay (5 min)
-```
-1. Swipe ativamente (up/down)
-2. Deixar rodar 5 min com interação
-3. Anotar:
-   - FPS com interação?
-   - Latência percebida?
-   - Colisões são justas?
-```
-
-### Phase 3: Stress (2 min)
-```
-1. Abrir app normalmente
-2. Deixar rodar até game over (mínimo 2 min)
-3. Anotar:
-   - FPS manteve 60?
-   - Memory cresceu > 50MB?
-   - Crashes?
-```
-
-### Resultado
-Preencher [`POC_RESULTS.md`](#resultado-final):
-```markdown
-## Resultado POC
-
-**Dispositivo:** iPhone 12 / Pixel 5a
-**Data:** 2026-06-27
-
-| Critério | Resultado | Status |
-|----------|-----------|--------|
-| FPS (55+) | 58 fps | ✅ |
-| Latency (<100ms) | 45ms | ✅ |
-| Memory stable | +15MB | ✅ |
-| Sem crashes | Sim | ✅ |
-
-**Decisão:** ✅ **APROVADO** - Prosseguir para full game build
-```
-
----
-
-## 📝 O que a POC NÃO Tem
-
-Propositalmente simplificado:
-
-- ❌ Sprites reais (usando shapes geométricas)
-- ❌ Áudio / música
-- ❌ Sistema de vidas completo (apenas health bar)
-- ❌ UI polida / menus
-- ❌ Backend / persistência
-- ❌ Múltiplos game modes
-- ❌ Animations complexas
-
-**Tudo isso será adicionado após aprovação da POC.**
-
----
-
-## ✅ Conclusão & Próximos Passos
-
-### POC foi bem-sucedida em validar:
-- ✅ Viabilidade mecânica do conceito (endless runner)
-- ✅ Stack Expo/React Native consegue suportar o jogo
-- ✅ Colisões e dinâmica funcionam corretamente
-- ✅ Layout responsivo entre orientações
-
-### Se produtizar:
-
-**Opção A - Mudar de Engine (Recomendado)**
-- Usar Godot com exportação Expo
-- WebGL customizado
-- Native game loop em C++
-- *Razão: Melhor performance, maior flexibilidade*
-
-**Opção B - Limitar Escopo no React Native**
-- Reduzir obstáculos simultâneos
-- Menor canvas
-- Reduzir spawn rate
-- *Razão: Mais rápido, mas com limitações visuais*
-
-**Opção C - Continuar com Expo/RN**
-1. **Integrar sprites reais** via spritesheets
-2. **Adicionar efeitos sonoros** e background music
-3. **Sistema de vidas** mais polido (3 vidas, game over screen)
-4. **HUD/UI polida** (menu principal, pause, score display)
-5. **Level progression** (difficulty scaling)
-6. **Backend multiplayer** (opcional)
-7. **Aceitar limitação de FPS** ou otimizar ainda mais
-
----
-
-## 📚 Referências & Recursos
-
-### Official Docs
-- [React Native Skia](https://shopify.github.io/react-native-skia/)
-- [Reanimated 3](https://docs.swmansion.com/react-native-reanimated/)
-- [Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
-- [Expo](https://docs.expo.dev/versions/v56.0.0/)
-
-### Game Development Patterns
-- [Game Loop](https://gameprogrammingpatterns.com/game-loop.html) - Classic reference
-- [AABB Collision](https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection) - Rectangle intersection
-
-### Performance
-- [React Native Performance](https://reactnative.dev/docs/performance)
-- [Profiling Expo Apps](https://docs.expo.dev/debugging/debugger-frontend/#performance)
-
----
-
-## 👥 Desenvolvimento via SDD
-
-Projeto estruturado com **Spec-Driven Development**:
-
-✅ **Phase 1:** Brainstorming & Coleta de Requisitos  
-✅ **Phase 2:** Decomposição em Tasks (Sprints)  
-✅ **Phase 3:** Implementação TDD-style  
-✅ **Phase 4:** Verificação & Testes  
-✅ **Phase 5:** Troubleshooting & Tuning  
-✅ **Phase 6:** Resultado Final & Decisão
-
-Vide [POC_GUIDE.md](./POC_GUIDE.md) para detalhes completos de cada fase.
-
----
-
-## 📚 Documentação Completa
-
-Além deste README, veja:
-
-- **[docs/POC-CONCLUSION.md](./docs/POC-CONCLUSION.md)** - Conclusões finais, descobertas e recomendações
-- **[POC_GUIDE.md](./POC_GUIDE.md)** - Guia passo-a-passo original (Fases 1-6)
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arquitetura técnica e decisões de design
-
----
-
-## 📞 Suporte
-
-Problemas?
-
-1. ✅ Verificar [Troubleshooting](#-troubleshooting) section
-2. ✅ Ler [POC_GUIDE.md](./POC_GUIDE.md) seção específica
-3. ✅ Verificar [ARCHITECTURE.md](./ARCHITECTURE.md) decisões de design
-4. ✅ Ligar debugger via Expo Dev Client
-
----
-
-## 📄 License
-
-MIT - Use livremente para educar e desenvolver
-
----
-
-**Created with ❤️ via Spec-Driven Development**  
-**Last Updated:** Julho 2026 (POC Concluído)  
-**Version:** 1.0.0-poc-final
-
----
-
-## Checklist de Validação Rápida
-
-Antes de começar testes, validar:
-
-- [ ] `npm install` completou sem erros
-- [ ] iOS/Android SDKs atualizadas
-- [ ] Dispositivo conectado (real device, não emulador)
-- [ ] Device em modo voo para teste baseline
-- [ ] Xcode/Android Studio profiler instalado
-- [ ] Git branch limpa (sem mudanças pendentes)
-- [ ] POC_GUIDE.md foi lido (mínimo seções 1-2)
-
-✅ Tudo pronto? Vá para **Quick Start** e comece os testes!
+MIT — see [LICENSE](./LICENSE).
