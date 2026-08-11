@@ -2,7 +2,7 @@
 
 The validation protocol for Food Fight v0.0.1. There is no automated test suite — validation is manual and device-based, because the question that matters most (frame rate on real hardware) cannot be answered any other way.
 
-**Status: this protocol has not yet been run against v0.0.1.** The numbers in [results.md](./results.md) come from the POC, which drew a much simpler scene. Treat them as a floor, not a prediction.
+**Status: this protocol has not yet been run against v0.0.1.** The POC passed its criteria ([results.md](./results.md)) but drew a much simpler scene, so its result is a **ceiling for v0.0.1, not a prediction**.
 
 ---
 

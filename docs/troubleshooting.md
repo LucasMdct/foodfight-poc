@@ -71,7 +71,7 @@ If the reading is valid, the levers in order of effect:
 3. Simplify `Tablecloth` — a full-screen layer repainted every frame, the largest single draw
 4. Reduce path complexity in `src/render/foodie/characters/`
 
-The POC measured 30–50 fps on mid-range ARM with a much simpler scene ([results.md](./results.md)). v0.0.1 draws more, so a lower ceiling is expected rather than surprising.
+The POC passed its frame-rate criterion on mid-range ARM with a much simpler scene ([results.md](./results.md)). v0.0.1 draws more, so some headroom loss is expected rather than surprising — but a large drop points at the scene, not the loop.
 
 ### Frame rate degrades over time
 

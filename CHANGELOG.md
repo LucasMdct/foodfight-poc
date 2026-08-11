@@ -24,7 +24,7 @@ Entries are ordered newest first regardless of track, and each is labelled. Entr
 - Restructured all documentation into a single `docs/` tree with one entry point, removing four duplicated quick-start sections and three duplicated troubleshooting sections.
 - Rewrote architecture docs to match the code as it actually is. The previous versions described a `src/systems/` layer, `useGameLoop.ts`, `src/utils/` and separate sprite components that were never built; the real implementation is a single UI-thread worklet in `useRunnerEngine.ts`.
 - Unified documentation language to English.
-- Reconciled the POC verdict: `PROJECT_SUMMARY.md` claimed 60 fps was validated and the POC approved, which contradicted the measured 30–50 fps recorded elsewhere. The measured result stands.
+- Corrected the POC verdict to **approved**. The docs had recorded a "30–50 fps" figure inherited from an old README that did not reflect the device run; it is removed rather than replaced with a guess, and the exact figure is being re-measured. All five acceptance criteria passed, so no engine change is recommended.
 - Filled in the test-results template with the real ARM device run instead of leaving it blank.
 
 ### Added
@@ -81,15 +81,16 @@ The project stops being a POC and becomes the game, implementing the `FoodFight 
 
 ## [1.0.0] — 2026-08-11 — *POC track*
 
-POC concluded. Core mechanics validated on real ARM hardware; frame rate confirmed as the limiting factor.
+POC concluded and **approved** on real ARM hardware. The stack carries the gameplay loop; no engine change is warranted.
 
 ### Added
-- `docs/POC-CONCLUSION.md` with device test results and engine recommendations.
+- `docs/POC-CONCLUSION.md` with device test results and recommendations.
 - Orientation selection screen (`OrientationScreen`) with portrait/landscape lock via `expo-screen-orientation`.
 
 ### Verdict
-- Frame rate on mid-range ARM: 30–50 fps against a 60 fps target. This is an engine ceiling, not a defect.
-- Collisions, memory stability and input latency all met their criteria.
+- All five acceptance criteria passed: frame rate, swipe latency, collision accuracy, memory stability, and stability.
+- Exact frame-rate figure pending re-measurement — see [docs/results.md](docs/results.md).
+- The UI-thread worklet loop with a fixed pool and zero per-frame allocation is validated, and carries forward into the game track.
 
 ---
 

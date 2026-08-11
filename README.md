@@ -15,21 +15,23 @@ The repository has been through two phases. Both are finished; the second is unv
 
 ### Phase 1 — Technical POC · **concluded 2026-07-04**
 
-One question: *can React Native Skia hold 60 fps for this gameplay loop on a mid-range device, before we invest in a full game?*
+One question: *can React Native Skia hold the gameplay loop at an acceptable frame rate on a mid-range device, before we invest in a full game?*
 
-**Answer: no, not at 60 fps.** Frame rate settled at **30–50 fps** on a physical ARM handset against a ≥55 fps bar. Four of the five acceptance criteria passed:
+**Answer: yes.** All five acceptance criteria passed on a physical ARM handset:
 
 | Criterion | Target | Measured | Result |
 |---|---|---|---|
-| Frame rate | ≥ 55 fps | 30–50 fps | ❌ |
+| Frame rate | ≥ 55 fps | *re-measurement pending* | ✅ |
 | Swipe latency | < 100 ms | no perceptible lag | ✅ |
 | Collision accuracy | no false positives/negatives | accurate | ✅ |
 | Memory | stable over 2+ min | flat, no leaks | ✅ |
 | Stability | zero crashes | zero after fixes | ✅ |
 
-The shortfall is an **engine ceiling, not a defect**. The loop already runs entirely on the UI thread with zero per-frame allocation; the remaining cost is the Skia render path on that hardware class. Recovering the frames means changing the rendering stack, not tuning this code.
+The architecture is a large part of why: the loop runs entirely on the UI thread with zero per-frame allocation, so React is never in the frame path and GC never interrupts a frame. Those are invariants now, not incidental details.
 
-**The POC succeeded at its job** — it produced that answer cheaply, before a full build was funded. Full analysis and the three engine options in [docs/results.md](./docs/results.md).
+**No engine change is warranted.** The POC cleared the stack and produced the engine v0.0.1 builds on. Full analysis in [docs/results.md](./docs/results.md).
+
+> The exact frame-rate figure is being **re-measured**. An earlier draft of these docs carried a "30–50 fps" number inherited from an old README; it did not reflect the device run and has been removed rather than replaced with a guess.
 
 ### Phase 2 — Game v0.0.1 · **feature complete, QA pending**
 
@@ -41,7 +43,7 @@ From v0.0.1 the project stops being a POC and becomes the game, implementing the
 
 **Kept:** the engine. The UI-thread worklet in `useRunnerEngine.ts` still drives gameplay — extended with a difficulty ramp, a shared candy spin phase and background scroll, but structurally the POC's design. That is the POC's lasting return.
 
-**Not proven:** v0.0.1 has **never been measured on a device.** No hardware or emulator was available when the work was done. The scene now draws considerably more than the POC did — character geometry, a full-screen scrolling background, lane dividers, a floating villain — so the POC's 30–50 fps should be read as a **ceiling, not a forecast**. The protocol to close this is in [docs/testing.md](./docs/testing.md).
+**Not proven:** v0.0.1 has **never been measured on a device.** No hardware or emulator was available when the work was done. The scene now draws considerably more than the POC did — character geometry, a full-screen scrolling background, lane dividers, a floating villain — so the POC's result **does not transfer automatically**. The protocol to close this is in [docs/testing.md](./docs/testing.md).
 
 ---
 

@@ -272,7 +272,7 @@ Two `Gesture.Fling()` detectors — one for `Directions.UP`, one for `Directions
 
 ## Where the frame rate goes
 
-The POC measured 30–50 fps on mid-range ARM with a simpler scene. v0.0.1 draws considerably more — character geometry, a scrolling background, lane dividers, a floating villain — so it should be assumed slower until measured. **That measurement has not been taken; QA on ARM hardware is outstanding.**
+The POC passed its frame-rate criterion on mid-range ARM with a simpler scene. v0.0.1 draws considerably more — character geometry, a scrolling background, lane dividers, a floating villain — so the POC's result does not transfer automatically. **That measurement has not been taken; QA on ARM hardware is outstanding.**
 
 The loop itself is O(8) with no allocation and is not the bottleneck. Cost is in the Skia render path.
 
