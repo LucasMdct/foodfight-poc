@@ -3,19 +3,45 @@
 A mobile endless runner built with **Expo SDK 56**, **React Native Skia** and **Reanimated**.
 
 **Version:** 0.0.1 ([changelog](./CHANGELOG.md))
-**Status:** feature branch — manual QA on ARM hardware pending
+**Status:** feature complete — POC concluded, v0.0.1 built, hardware QA pending
 
 Pick a Foodie, dodge the candy the Barão Brigadeiro throws across three lanes of a rolling kitchen table, and keep your three lives.
 
 ---
 
-## History
+## Where the project stands
 
-This repository started as a **technical POC** answering one question: can React Native Skia hold 60 fps for this gameplay loop on mid-range hardware? It concluded at 30–50 fps on physical ARM — mechanics validated, frame rate below target. Full write-up in [docs/results.md](./docs/results.md).
+The repository has been through two phases. Both are finished; the second is unverified on hardware.
 
-**From v0.0.1 the project stops being that POC** and becomes the full implementation of the `FoodFight v0.0.1` design. The POC's screens were replaced wholesale: themed loading screen, character selection, locked landscape orientation, centralized theme, Fredoka typography.
+### Phase 1 — Technical POC · **concluded 2026-07-04**
 
-The POC's engine work survives — the UI-thread worklet loop in `useRunnerEngine.ts` is still what drives gameplay. See [docs/architecture.md](./docs/architecture.md).
+One question: *can React Native Skia hold 60 fps for this gameplay loop on a mid-range device, before we invest in a full game?*
+
+**Answer: no, not at 60 fps.** Frame rate settled at **30–50 fps** on a physical ARM handset against a ≥55 fps bar. Four of the five acceptance criteria passed:
+
+| Criterion | Target | Measured | Result |
+|---|---|---|---|
+| Frame rate | ≥ 55 fps | 30–50 fps | ❌ |
+| Swipe latency | < 100 ms | no perceptible lag | ✅ |
+| Collision accuracy | no false positives/negatives | accurate | ✅ |
+| Memory | stable over 2+ min | flat, no leaks | ✅ |
+| Stability | zero crashes | zero after fixes | ✅ |
+
+The shortfall is an **engine ceiling, not a defect**. The loop already runs entirely on the UI thread with zero per-frame allocation; the remaining cost is the Skia render path on that hardware class. Recovering the frames means changing the rendering stack, not tuning this code.
+
+**The POC succeeded at its job** — it produced that answer cheaply, before a full build was funded. Full analysis and the three engine options in [docs/results.md](./docs/results.md).
+
+### Phase 2 — Game v0.0.1 · **feature complete, QA pending**
+
+From v0.0.1 the project stops being a POC and becomes the game, implementing the `FoodFight v0.0.1` design in full.
+
+**Delivered:** character selection with three heroes, the Barão Brigadeiro villain, Skia-rendered characters with an animated walk cycle, spinning candy projectiles, scrolling tablecloth and lane dividers, a three-lives model, HUD, Game Over with best-score tracking, a centralized theme with Fredoka typography, and Husky quality gates.
+
+**Replaced:** every POC screen. `GameCanvas`, `GameLoader` and `OrientationScreen` are gone; orientation is locked to landscape rather than chosen.
+
+**Kept:** the engine. The UI-thread worklet in `useRunnerEngine.ts` still drives gameplay — extended with a difficulty ramp, a shared candy spin phase and background scroll, but structurally the POC's design. That is the POC's lasting return.
+
+**Not proven:** v0.0.1 has **never been measured on a device.** No hardware or emulator was available when the work was done. The scene now draws considerably more than the POC did — character geometry, a full-screen scrolling background, lane dividers, a floating villain — so the POC's 30–50 fps should be read as a **ceiling, not a forecast**. The protocol to close this is in [docs/testing.md](./docs/testing.md).
 
 ---
 
