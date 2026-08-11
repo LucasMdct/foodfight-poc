@@ -9,7 +9,7 @@ module.exports = defineConfig([
       'dist/*',
       '.agents/**',
       '.superpowers/**',
-      'design-completo-foodfight-game/**',
+      'docs/design/**',
       'node_modules/**',
     ],
   },

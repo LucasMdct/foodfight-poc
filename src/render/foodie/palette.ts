@@ -1,6 +1,6 @@
 /**
  * Per-character color palettes, ported verbatim from
- * design-completo-foodfight-game/project/Foodie.dc.html.
+ * docs/design/project/Foodie.dc.html.
  * These are intrinsic character colors (not brand/theme colors), so they
  * live here rather than behind useTheme().
  */

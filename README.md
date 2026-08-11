@@ -87,15 +87,14 @@ Everything lives in [`docs/`](./docs/README.md). Start there.
 | Document | Use it for |
 |---|---|
 | [docs/README.md](./docs/README.md) | Documentation index |
-| [docs/architecture.md](./docs/architecture.md) | How the engine works and why |
-| [docs/results.md](./docs/results.md) | POC measurements and findings |
+| [docs/architecture.md](./docs/architecture.md) | How the game works and why |
 | [docs/testing.md](./docs/testing.md) | Validation protocol |
 | [docs/troubleshooting.md](./docs/troubleshooting.md) | When something breaks |
+| [docs/design/](./docs/design/) | Design handoff bundle — source of truth for shapes and colours |
+| [docs/results.md](./docs/results.md) | POC measurements and findings (historical) |
 | [docs/specs/2026-07-05-foodfight-v001-design.md](./docs/specs/2026-07-05-foodfight-v001-design.md) | v0.0.1 design spec |
 | [docs/plans/2026-07-05-foodfight-v001.md](./docs/plans/2026-07-05-foodfight-v001.md) | v0.0.1 implementation plan |
 | [CHANGELOG.md](./CHANGELOG.md) | Version history |
-
-> **Note:** `docs/architecture.md`, `testing.md` and `troubleshooting.md` still describe the POC baseline. They are accurate about the engine loop, which did not change, but not about the screen structure v0.0.1 introduced. Updating them is outstanding work on this branch.
 
 ---
 

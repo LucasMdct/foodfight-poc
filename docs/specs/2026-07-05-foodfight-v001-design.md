@@ -1,6 +1,6 @@
 # Design Spec: FoodFight v0.0.1 — Evolução da POC para jogo
 
-> Branch: `feature/v001` · Design de origem: `design-completo-foodfight-game/` (Guia de Estilo v0.0.1 + `FoodFight v0.0.1.dc.html` + `Foodie.dc.html`)
+> Branch: `feature/v001` · Design de origem: `docs/design/` (Guia de Estilo v0.0.1 + `FoodFight v0.0.1.dc.html` + `Foodie.dc.html`)
 
 ## 1. Contexto & Objetivos
 

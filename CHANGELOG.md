@@ -16,6 +16,11 @@ Entries are ordered newest first regardless of track, and each is labelled. Entr
 ## [Unreleased]
 
 ### Changed
+- Rewrote `docs/architecture.md`, `docs/testing.md` and `docs/troubleshooting.md` for v0.0.1. They previously described the POC: the wrong pool size, no difficulty ramp, a health bar instead of three lives, and components that no longer exist.
+- Moved the design handoff bundle from `design-completo-foodfight-game/` at the repo root to `docs/design/`, updating references in `eslint.config.js`, `src/render/foodie/palette.ts`, and the v0.0.1 spec and plan.
+- Recorded in `AGENTS.md` that `docs/design/` is the source of truth for shapes and colours, and that visual changes start there.
+
+### Changed (documentation restructure, POC track)
 - Restructured all documentation into a single `docs/` tree with one entry point, removing four duplicated quick-start sections and three duplicated troubleshooting sections.
 - Rewrote architecture docs to match the code as it actually is. The previous versions described a `src/systems/` layer, `useGameLoop.ts`, `src/utils/` and separate sprite components that were never built; the real implementation is a single UI-thread worklet in `useRunnerEngine.ts`.
 - Unified documentation language to English.
